@@ -17,7 +17,7 @@ This repository consists of a collection of filters to process images. Divided i
 3. Transformation images
 
 
-Some Filter are used in ***Image Processing*** is:
+***Image Processing*** Filter :
 ```
 negative filter
 grayscale filter
@@ -26,4 +26,17 @@ flip horizontal
 mirroring image
 mean filter
 median filter
+```
+***Edge Detection*** Filter :
+```
+Robert Method
+Laplacian Method
+Sobel Method
+Prewitt Method
+```
+
+***Transformation Image***
+```
+Translation image
+Scale image
 ```
