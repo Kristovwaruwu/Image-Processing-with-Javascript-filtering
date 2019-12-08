@@ -1,6 +1,6 @@
 # Image Processing 
 
-This project was built using [**Semantic-UI**](https://semantic-ui.com/introduction/getting-started.html). for the best user inteface framework.
+This project was built using [**Semantic-UI**](https://semantic-ui.com/introduction/getting-started.html) for the best user inteface framework website.
 
 > To use Semantic-UI 
 ```
