@@ -40,3 +40,5 @@ Prewitt Method
 Translation image
 Scale image
 ```
+
+Another feature is that it can change the RGBA value and view image histograms
