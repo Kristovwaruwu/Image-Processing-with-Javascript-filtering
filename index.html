@@ -3,8 +3,6 @@
 
 <head>
 	<title>Pengolahan Citra</title>
-
-
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
@@ -49,7 +47,7 @@
 								<h3 class="ui center aligned header">Kumpulan filter untuk mengolah citra</h3>
 								<div class="ui secondary blue segment">
 									<div class="ui pointing menu">
-										
+
 										<a href="#" class="item active">
 											<h4 class="ui header">Image Filtering</h4>
 										</a>
@@ -67,13 +65,20 @@
 										<button class="ui button" id='flip2'>Flip 2</button>
 										<button class="ui button" id='mirror'>Mirroring</button><br>
 										<hr>
+										<h1 class="ui header">New Filter Compound</h1>
+										<button class="ui button" id="blend">B&xW</button>
+										<button class="ui button" id="color">Color Filter</button>
+										<button class="ui button" id="glitch">Glitch Filter</button>
+										<button class="ui button" id="gatau">Gatau Filter</button>
+										<button class="ui button" id="bingkai">Bingkai Filter</button>
+										<hr>
 										<div class="ui labeled input">
-												<div class="ui red basic horizontal label">Filter Image</div>
-												<input type="number" id="num">
-												<button class="ui positive button" id='mean'>Mean</button>
-												<button class="ui positive button" id='median'>Median</button>
-											</div>
-											<hr>
+											<div class="ui red basic horizontal label">Filter Image</div>
+											<input type="number" id="num">
+											<button class="ui positive button" id='mean'>Mean</button>
+											<button class="ui positive button" id='median'>Median</button>
+										</div>
+										<hr>
 										<div class="ui labeled input">
 											<div class="ui red basic horizontal label">Check Histogram</div>
 											<select class="ui selection dropdown" id='histval'>
@@ -134,7 +139,7 @@
 														value='0'><input type='text' id='brightness_val' size='3'
 														disabled value='0'>
 												</div>
-											</div>	
+											</div>
 										</div>
 									</div>
 								</div>
@@ -396,6 +401,117 @@
 		obj.array2canvas(tes)
 	})
 
+	//NEW FILTER
+	//B&W
+	document.getElementById('blend').addEventListener('click', function () {
+		var Gxtemp = new Array(4)
+		var Gytemp = new Array(4)
+		// Variabel Gxtemp dan Gytemp menampung nilai array masing-masing sebanyak 4 
+		var G = new Array()
+		var xpos = 0;
+		var ypos = 0;
+		function cek(x, y, n) {
+			if (y >= 0 && x >= 0 && x < obj.width && y < obj.height) return parseInt(tes[obj.xy2i(x, y)])
+			else return 0
+		}
+		for (var i = 0; i < tes.length; i++) {
+			var Gtemp = new Array(4)
+			xpos = obj.i2x(i)
+			ypos = obj.i2y(i)
+			for (var j = 0; j < 3; j++) {
+				Gxtemp[j] = (cek(xpos, ypos))
+				Gytemp[j] = (cek(xpos, ypos))
+				Gtemp[j] = Math.floor(Math.sqrt((parseInt(Gxtemp[j]) * parseInt(Gxtemp[j])) + (parseInt(Gytemp[j]) * parseInt(Gytemp[j]))))
+			}
+			/*
+			Gxtempt perkalian matrik dengan kernel [-1 , 0 , 1 ; -1 , 0 , 1 ; -1 , 0 , 1]
+			Gytempt perkalian matrik dengan kernel [-1 , -1 , -1 ; 0 , 0 , 0 ; 1 , 1, 1]
+			Gtemp = √(Gxtemp^2 + Gytemp^2)	
+			 */
+			Gtemp[3] = tes[i][3]
+			G.push(Gtemp)
+		}
+		obj.array2canvas(G)
+	})
+
+	//AADC
+	document.getElementById('color').addEventListener('click', function () {
+		tesbackup = new Array()
+		for (var c = 0; c < tes.length; c++) {
+			temp = new Array()
+			for (var d = 0; d < 5; d++) {
+				temp.push(tes[c][d])
+			}
+			tesbackup.push(temp)
+		}
+		//end of copy
+		
+        for (var i = 0; i < tesbackup.length; i++) {
+            tes[i][0] = tesbackup[i][2]
+            tes[i][1] = tesbackup[i][2]
+            tes[i][2] = tesbackup[i][1]
+            tes[i][3] = tesbackup[i][3]
+        }
+        obj.array2canvas(tes)
+
+
+	})
+
+	
+	//Glitch effect
+	document.getElementById('glitch').addEventListener('click', function () {
+        var tesbackup = new Array()
+        var red = new Array()
+        var green = new Array()
+        var blue = new Array()
+
+        for (var c = 0; c < tes.length; c++) {
+            temp = new Array()
+            for (var d = 0; d < 4; d++) {
+                temp.push(tes[c][d])
+            }
+            tesbackup.push(temp)
+        }
+        for (var i = 0; i < tes.length; i++) {
+            xstart = obj.i2x(i) - 10
+            xend = obj.i2x(i) + 10
+            ystart = obj.i2y(i) - 10
+            yend = obj.i2y(i) + 10
+
+            for (var yc = ystart; yc <= yend; yc++) {
+                tempR = new Array()
+                tempG = new Array()
+                tempB = new Array()
+                for (var xc = xstart; xc <= xend; xc++) {
+                    if (yc >= 0 && xc >= 0 && xc < obj.width && yc < obj.height) {
+                        tempR.push(tesbackup[obj.xy2i(xc, yc)][0])
+                        tempG.push(tesbackup[obj.xy2i(xc, yc)][1])
+                        tempB.push(tesbackup[obj.xy2i(xc, yc)][2])
+                    } else {
+                        tempR.push(tesbackup[i][0])
+                        tempG.push(tesbackup[i][1])
+                        tempB.push(tesbackup[i][2])
+                    }
+                }
+                red.push(tempR)
+                green.push(tempG)
+                blue.push(tempB)
+            }
+            tesbackup[i][0] = Math.min.apply(null, red[i])
+            tesbackup[i][1] = Math.min.apply(null, green[i])
+            tesbackup[i][2] = Math.min.apply(null, blue[i])
+        }
+        for (var i = 0; i < tesbackup.length; i++) {
+            tes[i][0] = tes[i][0] - tesbackup[i][0]
+            tes[i][1] = tes[i][1] - tesbackup[i][0]
+            tes[i][2] = tes[i][2] - tesbackup[i][0]
+        }
+        obj.array2canvas(tes)
+
+    })
+
+
+
 	//<!--Mean Filtering-->
 	document.getElementById('mean').addEventListener('click', function () {
 		filtersize = parseInt(document.getElementById('num').value)
@@ -438,6 +554,8 @@
 		}
 		obj.array2canvas(tes)
 	})
+
+
 
 	//<!--Median Filter-->
 	document.getElementById('median').addEventListener('click', function () {
@@ -492,12 +610,142 @@
 		obj.array2canvas(tes)
 	})
 
-	
+
+	document.getElementById('gatau').addEventListener('click',function(){
+		//copy array to array without reference
+		tesbackup = new Array()
+		for(var c=0;c<tes.length;c++){
+			temp = new Array()
+			for(var d=0;d<4;d++){
+				temp.push(tes[c][d])
+			}
+			tesbackup.push(temp)
+		}
+		//end of copy
+		borderparam = (7-1)/2
+		red = new Array()
+		green = new Array()
+		blue = new Array()
+		count = 0
+		for(var i=0;i<tesbackup.length;i++){
+			var total = Math.floor((tesbackup[i][0] + tesbackup[i][1] + tesbackup[i][2])/3)
+			xstart = obj.i2x(i) - borderparam
+			xend = obj.i2x(i) + borderparam
+			ystart = obj.i2y(i) - borderparam
+			yend = obj.i2y(i) + borderparam
+			for(var yc=ystart; yc<=yend; yc++){
+				for(var xc=xstart; xc<=xend; xc++){
+					if(yc>=0 && xc>=0 && xc<obj.width && yc<obj.height){
+						red.push(tesbackup[obj.xy2i(xc,yc)][0]) 
+						green.push(tesbackup[obj.xy2i(xc,yc)][1])
+						blue.push(tesbackup[obj.xy2i(xc,yc)][2])
+					}
+					count++
+				}
+			}
+			red[i][0] = tesbackup[i][0]
+			green[i][1] = tesbackup[i][1]
+			blue[i][2] = tesbackup[i][2]
+			if(count % 2 == 0){
+				param = count/2
+			}
+			else{
+				param = (count - 1)/2
+			}
+			tes[i][0] = red[param]
+			tes[i][1] = green[param]
+			tes[i][2] = blue[param]
+			if(tes[i][0] <= 235 && tes[i][0] >= 10  && tes[i][1] <= 177 && tes[i][1] >= 50 && tes[i][2] <= 191 && tes[i][2] >= 50){
+				//tes[i][0] = tesbackup[i][0]+50
+				tes[i][0] = tes[i][0]+50
+				//tes[i][1] = tesbackup[i][1]
+				tes[i][1] = tes[i][1]
+				tes[i][2] = total
+				tes[i][3] = tesbackup[i][3]
+			}
+			else{
+				tes[i][0] = total
+				//tes[i][1] = tesbackup[i][1]
+				tes[i][1] = tes[i][1]
+				//tes[i][2] = tesbackup[i][2]+50
+				tes[i][2] = tes[i][2]+50
+				tes[i][3] = tesbackup[i][3]
+			}
+		}
+		obj.array2canvas(tes)
+	})
+
+	//Bingkai
+	document.getElementById('bingkai').addEventListener('click',function(){
+		var scaleval = 0.9
+		var xpos = 0
+		var ypos = 0
+		var xnow = 0
+		var ynow = 0
+		var objW = obj.width
+		var objH = obj.height
+		
+		filtersize = 11
+		if(filtersize % 2 == 0 || filtersize < 3){
+			alert('Filter Size must be odd number and greater than 3')
+			return false
+		}
+		borderparam = (filtersize - 1)/2
+		meandoubleparam = filtersize*filtersize
+		
+		tesbackup = new Array()
+		
+		for(var c=0;c<tes.length;c++){
+			temp = new Array()
+			for(var d=0;d<4;d++){
+				temp.push(tes[c][d])
+			}
+			tesbackup.push(temp)
+		}
+		
+		for(var i=0; i<tes.length; i++){ 
+			xpos = obj.i2x(i) 
+			ypos = obj.i2y(i)
+			xnow = Math.round( (xpos-1)*(objW-1)/(scaleval*objW-1)+1 )
+			ynow = Math.round( (ypos-1)*(objH-1)/(scaleval*objH-1)+1 )
+			var posnow = obj.xy2i(xnow,ynow)
+			if(posnow >= 0 && posnow < tesbackup.length && (xnow>=obj.width/10 && xnow<obj.width) && (ynow>=obj.height/10 && ynow<obj.height)){
+				tesbackup[i][0] = tes[posnow][0]
+				tesbackup[i][1] = tes[posnow][1]
+				tesbackup[i][2] = tes[posnow][2]
+			}
+			else{
+				xstart = obj.i2x(i) - borderparam
+				xend = obj.i2x(i) + borderparam
+				ystart = obj.i2y(i) - borderparam
+				yend = obj.i2y(i) + borderparam
+				red = 0
+				green = 0
+				blue = 0
+				for(var yc=ystart; yc<=yend; yc++){
+					for(var xc=xstart; xc<=xend; xc++){
+						if(yc>=0 && xc>=0 && xc<obj.width && yc<obj.height){
+							red += tesbackup[obj.xy2i(xc,yc)][0]
+							green += tesbackup[obj.xy2i(xc,yc)][1]
+							blue += tesbackup[obj.xy2i(xc,yc)][2]
+						}
+					}
+				}
+				tesbackup[i][0] = Math.floor(red/meandoubleparam)
+				tesbackup[i][1] = Math.floor(green/meandoubleparam)
+				tesbackup[i][2] = Math.floor(blue/meandoubleparam)
+			}
+		}
+		obj.array2canvas(tesbackup)
+	})
+
+
+
 	//Semantic Function Callback
 	function callDropdown() {
 		$('.ui.dropdown')
 			.dropdown();
 	}
-	setTimeout(callDropdown, 10);	
+	setTimeout(callDropdown, 10);
 
 </script>
