@@ -17,30 +17,6 @@ This repository consists of a collection of filters to process images. Divided i
 3. Transformation images
 
 
-***Image Processing*** Filter :
-```
-negative filter
-grayscale filter
-flip vertical
-flip horizontal
-mirroring image
-mean filter
-median filter
-```
-***Edge Detection*** Filter :
-```
-Robert Method
-Laplacian Method
-Sobel Method
-Prewitt Method
-```
-
-***Transformation Image***
-```
-Translation image
-Scale image
-```
-
 Another feature is that it can change the RGBA value and view image histograms.
 
-#WILL BE UPDATED, WAIT FOR IT
+# WILL BE UPDATED, WAIT FOR IT
